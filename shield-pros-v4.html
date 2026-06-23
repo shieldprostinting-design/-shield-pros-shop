@@ -1,0 +1,2433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><script src="https://widgets.leadconnectorhq.com/loader.js" data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js" data-widget-id="6a39bdb36eb44d6f320dc288" data-source="WEB_USER"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shield Pros Films & Tools — Premium Tinting Tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --bg-2: #131313;
+    --bg-3: #1a1a1a;
+    --text: #f5f5f5;
+    --text-dim: #888;
+    --text-mute: #555;
+    --gold: #d4a04a;
+    --gold-dim: #a07a35;
+    --cyan: #00e5ff;
+    --cyan-glow: rgba(0,229,255,0.4);
+    --gold-glow: rgba(212,160,74,0.4);
+    --border: rgba(255,255,255,0.07);
+    --border-bright: rgba(212,160,74,0.3);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* === GRID OVERLAY === */
+  .grid-bg {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 100% 80% at 50% 30%, black 30%, transparent 95%);
+  }
+  .noise {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.06;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  }
+
+  /* === NEW: SCANLINES (subtle) === */
+  .scanlines {
+    position: fixed; inset: 0; z-index: 2; pointer-events: none; opacity: 0.5;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 2px,
+      rgba(255,255,255,0.012) 2px,
+      rgba(255,255,255,0.012) 3px
+    );
+  }
+
+  /* === NEW: HUD CORNERS === */
+  .hud {
+    position: fixed; z-index: 50; pointer-events: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: var(--text-mute);
+    text-transform: uppercase;
+  }
+  .hud.tl { top: 80px; left: 24px; }
+  .hud.tr { top: 80px; right: 24px; text-align: right; }
+  .hud.bl { bottom: 24px; left: 24px; }
+  .hud.br { bottom: 24px; right: 24px; text-align: right; }
+  .hud .line { color: var(--cyan); opacity: 0.5; }
+  .hud .dot {
+    display: inline-block; width: 6px; height: 6px;
+    background: var(--cyan); border-radius: 50%;
+    box-shadow: 0 0 8px var(--cyan-glow);
+    animation: pulse 1.5s infinite;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .hud .rec-dot {
+    background: #ff4444; box-shadow: 0 0 8px rgba(255,68,68,0.5);
+  }
+
+  /* === NEW: TOP TICKER === */
+  .ticker {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 99;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+    height: 28px;
+  }
+  .ticker-track {
+    display: flex; gap: 60px;
+    white-space: nowrap;
+    animation: ticker-scroll 40s linear infinite;
+    padding: 6px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-mute);
+    text-transform: uppercase;
+  }
+  .ticker-track span { display: inline-flex; align-items: center; gap: 8px; }
+  .ticker-track .hi { color: var(--gold); }
+  .ticker-track .cy { color: var(--cyan); }
+  .ticker-track .dot {
+    display: inline-block; width: 4px; height: 4px;
+    background: var(--gold); border-radius: 50%;
+  }
+  @keyframes ticker-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* === HEADER (offset for ticker) === */
+  header {
+    position: fixed; top: 28px; left: 0; right: 0; z-index: 100;
+    padding: 18px 48px;
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo {
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 2px;
+    cursor: pointer;
+  }
+  .logo .shield {
+    width: 28px; height: 32px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+    clip-path: polygon(50% 0, 100% 25%, 100% 70%, 50% 100%, 0 70%, 0 25%);
+    display: grid; place-items: center;
+    transition: filter 0.3s;
+  }
+  .logo:hover .shield {
+    filter: drop-shadow(0 0 12px var(--gold-glow));
+  }
+  .logo .shield::after {
+    content: ''; width: 10px; height: 10px;
+    background: var(--bg);
+    clip-path: polygon(50% 0, 100% 25%, 100% 70%, 50% 100%, 0 70%, 0 25%);
+  }
+  .logo-text { color: var(--text); }
+  .logo-text span { color: var(--gold); }
+  nav ul {
+    display: flex; gap: 36px; list-style: none;
+  }
+  nav a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    transition: color 0.3s;
+    position: relative;
+  }
+  nav a:hover { color: var(--gold); text-shadow: 0 0 12px var(--gold-glow); }
+  nav a::before {
+    content: '//';
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--cyan);
+    opacity: 0;
+    margin-right: 4px;
+    transition: opacity 0.3s;
+    font-size: 11px;
+  }
+  nav a:hover::before { opacity: 1; }
+  .cart-pill {
+    background: transparent;
+    border: 1px solid var(--border-bright);
+    color: var(--gold);
+    padding: 10px 18px;
+    border-radius: 100px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .cart-pill:hover {
+    background: var(--gold);
+    color: var(--bg);
+    box-shadow: 0 0 24px var(--gold-glow);
+  }
+
+  /* === HERO V4: CINEMATIC === */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 140px 48px 80px;
+    z-index: 3;
+    overflow: hidden;
+  }
+  .hero-video-wrap {
+    position: absolute; inset: 0;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .hero-video-wrap video, .hero-video-wrap .video-fallback {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%; height: 100%;
+    object-fit: cover;
+    filter: brightness(0.45) contrast(1.1) saturate(0.85);
+  }
+  .video-fallback {
+    background:
+      radial-gradient(ellipse at 30% 40%, rgba(212,160,74,0.18), transparent 50%),
+      radial-gradient(ellipse at 70% 60%, rgba(0,229,255,0.10), transparent 55%),
+      linear-gradient(135deg, #0a0a0a 0%, #131313 50%, #0a0a0a 100%);
+  }
+  .video-fallback::before {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.04) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 80%);
+    animation: drift 20s linear infinite;
+  }
+  @keyframes drift {
+    from { background-position: 0 0; }
+    to { background-position: 80px 80px; }
+  }
+  .hero-overlay {
+    position: absolute; inset: 0; z-index: 1;
+    background:
+      linear-gradient(180deg, rgba(10,10,10,0.4) 0%, rgba(10,10,10,0.7) 50%, rgba(10,10,10,0.95) 100%),
+      radial-gradient(ellipse at center, transparent 0%, rgba(10,10,10,0.6) 100%);
+    pointer-events: none;
+  }
+  .hero-content {
+    text-align: center;
+    max-width: 1200px;
+    position: relative;
+    z-index: 3;
+  }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--cyan);
+    margin-bottom: 32px;
+    padding: 8px 16px;
+    border: 1px solid rgba(0,229,255,0.3);
+    border-radius: 100px;
+    background: rgba(0,229,255,0.04);
+    backdrop-filter: blur(8px);
+  }
+  .hero-tag::before {
+    content: ''; width: 6px; height: 6px;
+    background: var(--cyan);
+    border-radius: 50%;
+    box-shadow: 0 0 12px var(--cyan-glow);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(72px, 13vw, 200px);
+    line-height: 0.88;
+    letter-spacing: 1px;
+    margin-bottom: 28px;
+    position: relative;
+    text-shadow: 0 0 60px rgba(0,0,0,0.5);
+  }
+  .hero h1 .glitch {
+    position: relative;
+    display: inline-block;
+  }
+  .hero h1 .glitch::before,
+  .hero h1 .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    overflow: hidden;
+  }
+  .hero h1 .glitch::before {
+    color: var(--cyan);
+    animation: glitch-1 4s infinite linear alternate-reverse;
+    clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+    opacity: 0.7;
+  }
+  .hero h1 .glitch::after {
+    color: var(--gold);
+    animation: glitch-2 6s infinite linear alternate-reverse;
+    clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+    opacity: 0.5;
+  }
+  @keyframes glitch-1 {
+    0%, 90%, 100% { transform: translate(0); }
+    92% { transform: translate(-2px, 1px); }
+    94% { transform: translate(2px, -1px); }
+    96% { transform: translate(-1px, -1px); }
+    98% { transform: translate(1px, 2px); }
+  }
+  @keyframes glitch-2 {
+    0%, 88%, 100% { transform: translate(0); }
+    91% { transform: translate(1px, -2px); }
+    93% { transform: translate(-2px, 1px); }
+    95% { transform: translate(2px, 1px); }
+  }
+  .hero h1 .italic {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    color: var(--gold);
+    font-weight: 400;
+    letter-spacing: -2px;
+    text-shadow: 0 0 40px var(--gold-glow);
+  }
+  .hero-sub {
+    font-size: 19px;
+    color: var(--text);
+    max-width: 640px;
+    margin: 0 auto 44px;
+    line-height: 1.55;
+    opacity: 0.85;
+  }
+  .hero-cta {
+    display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+  }
+  .btn {
+    padding: 16px 36px;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 10px;
+    border: 1px solid;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-gold {
+    background: var(--gold);
+    color: var(--bg);
+    border-color: var(--gold);
+    box-shadow: 0 0 0 var(--gold-glow);
+  }
+  .btn-gold:hover {
+    background: transparent;
+    color: var(--gold);
+    box-shadow: 0 0 40px var(--gold-glow), inset 0 0 20px rgba(212,160,74,0.1);
+  }
+  .btn-ghost {
+    background: rgba(10,10,10,0.4);
+    color: var(--text);
+    border-color: var(--border-bright);
+    backdrop-filter: blur(8px);
+  }
+  .btn-ghost:hover {
+    border-color: var(--cyan);
+    color: var(--cyan);
+    box-shadow: 0 0 30px var(--cyan-glow);
+  }
+
+  /* Subtle hex orbit kept as ambient depth - very low opacity over video */
+  .hex-orbit-ambient {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 1000px; height: 1000px;
+    z-index: 2;
+    opacity: 0.15;
+    pointer-events: none;
+  }
+  .hex {
+    position: absolute;
+    width: 80px; height: 92px;
+    background: transparent;
+    border: 1px solid var(--gold);
+    clip-path: polygon(50% 0, 100% 25%, 100% 70%, 50% 100%, 0 70%, 0 25%);
+  }
+  .hex.small { width: 40px; height: 46px; border-color: var(--cyan); }
+  .hex.large { width: 140px; height: 162px; }
+  @keyframes orbit1 { 0% { transform: rotate(0deg) translateX(420px) rotate(0deg); } 100% { transform: rotate(360deg) translateX(420px) rotate(-360deg); } }
+  @keyframes orbit2 { 0% { transform: rotate(0deg) translateX(300px) rotate(0deg); } 100% { transform: rotate(-360deg) translateX(300px) rotate(360deg); } }
+  @keyframes orbit3 { 0% { transform: rotate(0deg) translateX(480px) rotate(0deg); } 100% { transform: rotate(360deg) translateX(480px) rotate(-360deg); } }
+  .hex.h1 { top: 50%; left: 50%; margin: -46px 0 0 -40px; animation: orbit1 24s linear infinite; }
+  .hex.h2 { top: 50%; left: 50%; margin: -23px 0 0 -20px; animation: orbit2 18s linear infinite; animation-delay: -4s; }
+  .hex.h3 { top: 50%; left: 50%; margin: -81px 0 0 -70px; animation: orbit3 30s linear infinite; animation-delay: -10s; }
+  .hex.h4 { top: 50%; left: 50%; margin: -46px 0 0 -40px; animation: orbit1 26s linear infinite; animation-delay: -8s; }
+  .hex.h5 { top: 50%; left: 50%; margin: -23px 0 0 -20px; animation: orbit2 22s linear infinite; animation-delay: -14s; }
+
+  /* Scroll indicator */
+  .scroll-cue {
+    position: absolute;
+    bottom: 32px; left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--text-mute);
+    text-transform: uppercase;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    animation: cue-bounce 2.5s ease-in-out infinite;
+  }
+  .scroll-cue .bar {
+    width: 1px; height: 32px;
+    background: linear-gradient(to bottom, transparent, var(--gold));
+  }
+  @keyframes cue-bounce {
+    0%, 100% { transform: translate(-50%, 0); opacity: 0.7; }
+    50% { transform: translate(-50%, 6px); opacity: 1; }
+  }
+
+  /* === STATS BAR === */
+  .stats {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 36px 48px;
+    background: var(--bg-2);
+    position: relative;
+    z-index: 4;
+  }
+  .stats::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(212,160,74,0.04), transparent);
+    pointer-events: none;
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .stat {
+    text-align: center;
+    position: relative;
+    transition: transform 0.3s;
+  }
+  .stat:hover { transform: translateY(-3px); }
+  .stat:hover .stat-num { text-shadow: 0 0 24px var(--gold-glow); }
+  .stat:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: -16px; top: 10%;
+    height: 80%; width: 1px;
+    background: var(--border);
+  }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    color: var(--gold);
+    letter-spacing: 2px;
+    line-height: 1;
+    transition: text-shadow 0.3s;
+  }
+  .stat-num .mono {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 24px;
+    color: var(--cyan);
+  }
+  .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    margin-top: 10px;
+    text-transform: uppercase;
+  }
+
+  /* === SECTION SHELL === */
+  section { position: relative; z-index: 3; }
+  .section-pad { padding: 140px 48px; }
+  .section-head {
+    max-width: 1400px;
+    margin: 0 auto 64px;
+  }
+  .section-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--cyan);
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+  .section-tag::before { content: '// '; opacity: 0.5; }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 7vw, 96px);
+    line-height: 0.95;
+    letter-spacing: 1px;
+    max-width: 900px;
+  }
+  .section-title .italic {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    color: var(--gold);
+    font-weight: 400;
+    letter-spacing: -1px;
+  }
+
+  /* === CRAFTED SECTION === */
+  .crafted {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    max-width: 1400px;
+    margin: 0 auto;
+    align-items: center;
+  }
+  .crafted-visual {
+    aspect-ratio: 4/5;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.4s;
+  }
+  .crafted-visual:hover {
+    border-color: var(--border-bright);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 80px rgba(212,160,74,0.15);
+  }
+  .crafted-visual::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(circle at 30% 40%, rgba(212,160,74,0.18), transparent 50%),
+      radial-gradient(circle at 70% 70%, rgba(0,229,255,0.12), transparent 50%);
+    z-index: 1;
+  }
+  .crafted-visual .crafted-img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.6s;
+    z-index: 2;
+  }
+  .crafted-visual.has-img .crafted-img { opacity: 1; }
+  .crafted-visual.has-img .hex-deco { opacity: 0; }
+  .crafted-visual .hex-deco {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%; aspect-ratio: 1;
+    border: 1px solid var(--gold);
+    clip-path: polygon(50% 0, 100% 25%, 100% 70%, 50% 100%, 0 70%, 0 25%);
+    opacity: 0.4;
+    z-index: 1;
+    transition: opacity 0.6s;
+  }
+  .crafted-visual .hex-deco.inner {
+    width: 35%;
+    border-color: var(--cyan);
+    opacity: 0.6;
+  }
+  .crafted-visual .img-label {
+    position: absolute;
+    bottom: 24px; left: 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    z-index: 3;
+    background: rgba(10,10,10,0.7);
+    padding: 4px 10px;
+    border-radius: 4px;
+    backdrop-filter: blur(8px);
+  }
+  .crafted-visual .corner-tag {
+    position: absolute;
+    top: 16px; right: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: var(--cyan);
+    z-index: 3;
+    border: 1px solid rgba(0,229,255,0.3);
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: rgba(10,10,10,0.7);
+    backdrop-filter: blur(8px);
+  }
+  .crafted-text h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 6vw, 80px);
+    line-height: 1;
+    margin-bottom: 24px;
+    letter-spacing: 1px;
+  }
+  .crafted-text h2 .italic {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    color: var(--gold);
+    font-weight: 400;
+  }
+  .crafted-text p {
+    font-size: 17px;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+    line-height: 1.7;
+  }
+  .crafted-text .meta {
+    display: flex;
+    gap: 32px;
+    margin-top: 40px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+  .meta-item .key {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-mute);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .meta-item .val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    color: var(--gold);
+    letter-spacing: 1px;
+  }
+
+  /* === PRODUCT GRID === */
+  .products-wrap { max-width: 1400px; margin: 0 auto; }
+  .filter-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 48px;
+    flex-wrap: wrap;
+  }
+  .filter-chip {
+    padding: 10px 20px;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.3s;
+    background: transparent;
+  }
+  .filter-chip:hover { border-color: var(--gold); color: var(--gold); }
+  .filter-chip.active {
+    background: var(--gold);
+    color: var(--bg);
+    border-color: var(--gold);
+    box-shadow: 0 0 20px var(--gold-glow);
+  }
+  .products {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+  }
+  .product {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s, box-shadow 0.4s;
+    cursor: pointer;
+    position: relative;
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+  .product::before {
+    content: ''; position: absolute; inset: 0;
+    border-radius: 8px;
+    padding: 1px;
+    background: linear-gradient(135deg, transparent 40%, rgba(212,160,74,0.4) 50%, transparent 60%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s;
+    pointer-events: none;
+  }
+  .product:hover {
+    border-color: var(--border-bright);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 40px rgba(212,160,74,0.08);
+  }
+  .product:hover::before { opacity: 1; }
+  .product-img {
+    aspect-ratio: 1;
+    background: var(--bg-3);
+    position: relative;
+    overflow: hidden;
+    display: grid; place-items: center;
+  }
+  .product-img::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at center, rgba(212,160,74,0.06), transparent 60%);
+    z-index: 1;
+  }
+  .product-img img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.4s, transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+    z-index: 2;
+  }
+  .product-img.has-img img { opacity: 1; }
+  .product-img.has-img .hex-placeholder { opacity: 0; }
+  .product:hover .product-img img { transform: scale(1.06); }
+  .product-img .hex-placeholder {
+    width: 50%; aspect-ratio: 1;
+    border: 1px solid var(--gold);
+    clip-path: polygon(50% 0, 100% 25%, 100% 70%, 50% 100%, 0 70%, 0 25%);
+    opacity: 0.3;
+    z-index: 1;
+    transition: opacity 0.3s;
+    position: relative;
+  }
+  .product-badge {
+    position: absolute;
+    top: 12px; left: 12px;
+    z-index: 3;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    padding: 4px 10px;
+    border-radius: 100px;
+    background: rgba(10,10,10,0.85);
+    border: 1px solid var(--border-bright);
+    color: var(--gold);
+    text-transform: uppercase;
+    backdrop-filter: blur(8px);
+  }
+  .product-badge.cyan {
+    border-color: rgba(0,229,255,0.3);
+    color: var(--cyan);
+  }
+  .product-badge.out {
+    background: rgba(255,80,80,0.15);
+    border-color: rgba(255,80,80,0.3);
+    color: #ff6b6b;
+  }
+  .product-badge.low {
+    background: rgba(255,180,60,0.12);
+    border-color: rgba(255,180,60,0.35);
+    color: #ffb43c;
+  }
+  .product-body {
+    padding: 20px;
+    position: relative;
+  }
+  .product-name {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .product-cat {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: var(--text-mute);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .product-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+  .product-price {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    color: var(--gold);
+    font-weight: 500;
+  }
+  .prod-add {
+    background: transparent;
+    border: 1px solid var(--border-bright);
+    color: var(--gold);
+    padding: 8px 14px;
+    border-radius: 100px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-transform: uppercase;
+  }
+  .prod-add:hover {
+    background: var(--gold);
+    color: var(--bg);
+    box-shadow: 0 0 16px var(--gold-glow);
+  }
+
+  /* === FILMS COMING SOON === */
+  .films {
+    background: var(--bg-2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .films::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+      radial-gradient(circle at 20% 50%, rgba(0,229,255,0.06), transparent 40%),
+      radial-gradient(circle at 80% 50%, rgba(212,160,74,0.06), transparent 40%);
+    pointer-events: none;
+  }
+  .films-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 80px;
+    max-width: 1400px;
+    margin: 0 auto;
+    align-items: center;
+    position: relative;
+  }
+  .films-text h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 7vw, 96px);
+    line-height: 0.95;
+    margin-bottom: 24px;
+    letter-spacing: 1px;
+  }
+  .films-text h2 .italic {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    color: var(--gold);
+    font-weight: 400;
+  }
+  .films-text p {
+    font-size: 17px;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+    line-height: 1.7;
+    max-width: 480px;
+  }
+  .countdown {
+    display: flex;
+    gap: 24px;
+    margin-top: 40px;
+  }
+  .count-box {
+    background: var(--bg);
+    border: 1px solid var(--border-bright);
+    padding: 18px 22px;
+    border-radius: 8px;
+    text-align: center;
+    min-width: 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .count-box::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, transparent, rgba(212,160,74,0.08));
+    pointer-events: none;
+  }
+  .count-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 40px;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .count-lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--text-mute);
+    margin-top: 6px;
+    text-transform: uppercase;
+  }
+  .films-visual {
+    aspect-ratio: 5/4;
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+    display: grid; place-items: center;
+    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.4s;
+  }
+  .films-visual:hover {
+    border-color: var(--border-bright);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 80px rgba(212,160,74,0.15);
+  }
+  .films-visual video, .films-visual .films-vid-fallback {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    z-index: 1;
+  }
+  .films-vid-fallback {
+    background:
+      linear-gradient(135deg, transparent 30%, rgba(212,160,74,0.1) 70%, transparent 100%),
+      radial-gradient(circle at 30% 70%, rgba(0,229,255,0.08), transparent 50%);
+  }
+  .films-visual .play {
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    background: rgba(212,160,74,0.1);
+    border: 1px solid var(--gold);
+    display: grid; place-items: center;
+    backdrop-filter: blur(20px);
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 0 30px var(--gold-glow);
+  }
+  .films-visual .play:hover {
+    background: var(--gold);
+    transform: scale(1.1);
+    box-shadow: 0 0 60px var(--gold-glow);
+  }
+  .films-visual .play::after {
+    content: '';
+    width: 0; height: 0;
+    border-left: 18px solid var(--gold);
+    border-top: 12px solid transparent;
+    border-bottom: 12px solid transparent;
+    margin-left: 5px;
+    transition: border-color 0.3s;
+  }
+  .films-visual .play:hover::after {
+    border-left-color: var(--bg);
+  }
+  .films-visual .corner-tag {
+    position: absolute;
+    top: 16px; left: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: var(--cyan);
+    z-index: 3;
+    border: 1px solid rgba(0,229,255,0.3);
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: rgba(10,10,10,0.7);
+    backdrop-filter: blur(8px);
+  }
+
+  /* === TESTIMONIAL === */
+  .testimonial-section {
+    text-align: center;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .quote-mark {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 140px;
+    color: var(--gold);
+    line-height: 0.5;
+    margin-bottom: 32px;
+    opacity: 0.4;
+    text-shadow: 0 0 60px var(--gold-glow);
+  }
+  .testimonial-quote {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: clamp(28px, 4vw, 48px);
+    line-height: 1.3;
+    margin-bottom: 40px;
+    color: var(--text);
+  }
+  .testimonial-author {
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+  .author-avatar {
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+    display: grid; place-items: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    color: var(--bg);
+    box-shadow: 0 0 24px var(--gold-glow);
+  }
+  .author-info { text-align: left; }
+  .author-name { font-weight: 600; font-size: 15px; }
+  .author-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  /* === NEWSLETTER === */
+  .newsletter {
+    background: var(--bg-2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .newsletter::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center top, rgba(212,160,74,0.08), transparent 60%);
+    pointer-events: none;
+  }
+  .newsletter-inner {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+  }
+  .newsletter h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(40px, 5vw, 64px);
+    line-height: 1;
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+  }
+  .newsletter h2 .italic {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    color: var(--gold);
+    font-weight: 400;
+  }
+  .newsletter p {
+    color: var(--text-dim);
+    margin-bottom: 32px;
+  }
+  .nl-form {
+    display: flex;
+    gap: 12px;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  .nl-form input {
+    flex: 1;
+    padding: 16px 24px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .nl-form input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 24px var(--gold-glow);
+  }
+  .nl-form input::placeholder { color: var(--text-mute); }
+
+  /* === FOOTER === */
+  footer {
+    padding: 80px 48px 40px;
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+    position: relative;
+    z-index: 3;
+  }
+  .footer-grid {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 48px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid var(--border);
+  }
+  .footer-brand p {
+    color: var(--text-dim);
+    margin-top: 16px;
+    max-width: 320px;
+    font-size: 14px;
+  }
+  .footer-col h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col li { margin-bottom: 10px; }
+  .footer-col a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s;
+  }
+  .footer-col a:hover { color: var(--gold); }
+  .footer-bottom {
+    max-width: 1400px;
+    margin: 32px auto 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-mute);
+    letter-spacing: 1.5px;
+  }
+
+  /* === SCROLL REVEAL === */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.9s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .reveal.in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+
+  /* === CART PANEL === */
+  .cart-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .cart-overlay.open { opacity: 1; pointer-events: auto; }
+  .cart-panel {
+    position: fixed; top: 0; right: 0;
+    width: 100%; max-width: 440px; height: 100vh;
+    z-index: 201;
+    background: var(--bg);
+    border-left: 1px solid var(--border-bright);
+    transform: translateX(100%);
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    display: flex; flex-direction: column;
+    box-shadow: -20px 0 60px rgba(0,0,0,0.5);
+  }
+  .cart-panel.open { transform: translateX(0); }
+  .cart-header {
+    padding: 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .cart-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 2px;
+  }
+  .cart-title span { color: var(--gold); }
+  .cart-close {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.3s;
+  }
+  .cart-close:hover { border-color: var(--gold); color: var(--gold); }
+  .cart-items {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 24px;
+  }
+  .cart-item {
+    display: grid;
+    grid-template-columns: 70px 1fr auto;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .cart-item-img {
+    width: 70px; height: 70px;
+    background: var(--bg-3);
+    border-radius: 6px;
+    display: grid; place-items: center;
+    overflow: hidden;
+    position: relative;
+  }
+  .cart-item-img img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .cart-item-img .hex-mini {
+    width: 50%; aspect-ratio: 1;
+    border: 1px solid var(--gold);
+    clip-path: polygon(50% 0, 100% 25%, 100% 70%, 50% 100%, 0 70%, 0 25%);
+    opacity: 0.4;
+  }
+  .cart-item-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 0;
+  }
+  .cart-item-name {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .cart-item-price {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--gold);
+    font-size: 13px;
+    margin-top: 4px;
+  }
+  .cart-item-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .cart-qty {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 4px;
+  }
+  .cart-qty button {
+    background: transparent;
+    border: none;
+    color: var(--gold);
+    cursor: pointer;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    font-size: 16px;
+    line-height: 1;
+    display: grid; place-items: center;
+    transition: background 0.2s;
+  }
+  .cart-qty button:hover { background: rgba(212,160,74,0.15); }
+  .cart-qty span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    min-width: 20px;
+    text-align: center;
+  }
+  .cart-remove {
+    background: transparent;
+    border: none;
+    color: var(--text-mute);
+    font-size: 10px;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px;
+    transition: color 0.2s;
+  }
+  .cart-remove:hover { color: #ff6b6b; }
+  .cart-empty {
+    text-align: center;
+    padding: 60px 24px;
+    color: var(--text-dim);
+  }
+  .cart-empty-hex {
+    width: 80px; aspect-ratio: 1;
+    margin: 0 auto 20px;
+    border: 1px solid var(--gold);
+    clip-path: polygon(50% 0, 100% 25%, 100% 70%, 50% 100%, 0 70%, 0 25%);
+    opacity: 0.3;
+  }
+  .cart-footer {
+    padding: 24px;
+    border-top: 1px solid var(--border);
+    background: var(--bg-2);
+  }
+  .cart-totals { margin-bottom: 18px; }
+  .cart-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  .cart-row.total {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    color: var(--text);
+    letter-spacing: 1px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+  .cart-row.total .amount { color: var(--gold); }
+  .cart-checkout {
+    width: 100%;
+    padding: 18px;
+    background: var(--gold);
+    color: var(--bg);
+    border: 1px solid var(--gold);
+    border-radius: 100px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .cart-checkout:hover:not(:disabled) { box-shadow: 0 0 40px var(--gold-glow); }
+  .cart-checkout:disabled { opacity: 0.4; cursor: not-allowed; }
+  .cart-loading, .cart-shipping-note {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    margin-top: 12px;
+    text-align: center;
+  }
+  .cart-loading { color: var(--cyan); display: none; }
+  .cart-loading.show { display: block; }
+  .cart-shipping-note { color: var(--cyan); }
+
+  /* === RESPONSIVE === */
+  @media (max-width: 900px) {
+    header { padding: 16px 24px; }
+    nav { display: none; }
+    .section-pad { padding: 80px 24px; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+    .stat:nth-child(2)::after, .stat:nth-child(4)::after { display: none; }
+    .crafted, .films-grid { grid-template-columns: 1fr; gap: 48px; }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+    .nl-form { flex-direction: column; }
+    .footer-bottom { flex-direction: column; gap: 12px; }
+    .hex-orbit-ambient { width: 600px; height: 600px; }
+    .hero { padding: 120px 24px 60px; }
+    .hud { display: none; }
+  }
+
+  /* === THE LINEUP — SHOWCASE GALLERY === */
+  #lineup { background: linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 50%, var(--bg) 100%); }
+  .lineup-wrap { max-width: 1400px; margin: 0 auto; }
+  .lineup-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 48px;
+  }
+  .lineup-tile {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    cursor: zoom-in;
+    transition: transform 0.4s cubic-bezier(0.2,0.8,0.2,1), border-color 0.3s, box-shadow 0.3s;
+  }
+  .lineup-tile::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(212,160,74,0.06), transparent 50%);
+    z-index: 2; pointer-events: none;
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .lineup-tile::after {
+    content: '⤢';
+    position: absolute; top: 12px; right: 12px;
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(10,10,10,0.85);
+    color: var(--cyan);
+    border: 1px solid var(--border-bright);
+    font-size: 14px;
+    border-radius: 2px;
+    opacity: 0; transform: translateY(-4px);
+    transition: opacity 0.3s, transform 0.3s;
+    z-index: 3;
+    backdrop-filter: blur(4px);
+  }
+  .lineup-tile:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-bright);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.6), 0 0 0 1px var(--border-bright);
+  }
+  .lineup-tile:hover::before { opacity: 1; }
+  .lineup-tile:hover::after { opacity: 1; transform: translateY(0); }
+  .lineup-tile img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.6s cubic-bezier(0.2,0.8,0.2,1);
+    background: #fff;
+  }
+  .lineup-tile:hover img { transform: scale(1.06); }
+  .lineup-tile .tile-tag {
+    position: absolute;
+    bottom: 10px; left: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--text-mute);
+    background: rgba(10,10,10,0.75);
+    padding: 4px 8px;
+    border-left: 1px solid var(--cyan);
+    z-index: 3;
+    opacity: 0;
+    transition: opacity 0.3s;
+    backdrop-filter: blur(4px);
+  }
+  .lineup-tile:hover .tile-tag { opacity: 1; }
+
+  /* The Lineup HUD strip */
+  .lineup-hud {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 32px;
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-mute);
+    text-transform: uppercase;
+  }
+  .lineup-hud .lineup-hud-dot {
+    display: inline-block; width: 6px; height: 6px;
+    background: var(--cyan); border-radius: 50%;
+    margin-right: 8px;
+    box-shadow: 0 0 8px var(--cyan-glow);
+    animation: pulse-dot 2s infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* Lightbox */
+  .lineup-lightbox {
+    position: fixed; inset: 0;
+    z-index: 9999;
+    background: rgba(5,5,5,0.96);
+    display: none;
+    align-items: center; justify-content: center;
+    padding: 40px;
+    backdrop-filter: blur(20px);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .lineup-lightbox.open { display: flex; opacity: 1; }
+  .lineup-lightbox img {
+    max-width: 90vw;
+    max-height: 85vh;
+    object-fit: contain;
+    background: #fff;
+    box-shadow: 0 30px 100px rgba(0,0,0,0.8), 0 0 0 1px var(--border-bright);
+    border-radius: 2px;
+  }
+  .lineup-lightbox .lb-close {
+    position: absolute;
+    top: 24px; right: 24px;
+    width: 44px; height: 44px;
+    background: transparent;
+    border: 1px solid var(--border-bright);
+    color: var(--text);
+    font-size: 20px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, color 0.2s;
+  }
+  .lineup-lightbox .lb-close:hover { background: var(--gold); color: var(--bg); }
+  .lineup-lightbox .lb-prev,
+  .lineup-lightbox .lb-next {
+    position: absolute;
+    top: 50%; transform: translateY(-50%);
+    width: 56px; height: 56px;
+    background: rgba(10,10,10,0.6);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 22px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, border-color 0.2s;
+    backdrop-filter: blur(8px);
+  }
+  .lineup-lightbox .lb-prev { left: 24px; }
+  .lineup-lightbox .lb-next { right: 24px; }
+  .lineup-lightbox .lb-prev:hover,
+  .lineup-lightbox .lb-next:hover {
+    background: var(--bg-3);
+    border-color: var(--border-bright);
+    color: var(--gold);
+  }
+  .lineup-lightbox .lb-counter {
+    position: absolute;
+    bottom: 24px; left: 50%; transform: translateX(-50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+  .lineup-lightbox .lb-counter .lb-counter-bar {
+    display: inline-block;
+    width: 60px; height: 1px;
+    background: var(--border);
+    margin: 0 12px;
+    vertical-align: middle;
+    position: relative;
+  }
+  .lineup-lightbox .lb-counter .lb-counter-bar::before {
+    content: '';
+    position: absolute; left: 0; top: 0;
+    height: 100%;
+    background: var(--cyan);
+    box-shadow: 0 0 8px var(--cyan-glow);
+    width: var(--lb-progress, 0%);
+    transition: width 0.3s;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .lineup-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .lineup-lightbox { padding: 16px; }
+    .lineup-lightbox .lb-prev { left: 8px; width: 44px; height: 44px; }
+    .lineup-lightbox .lb-next { right: 8px; width: 44px; height: 44px; }
+    .lineup-lightbox .lb-close { top: 12px; right: 12px; width: 36px; height: 36px; }
+  }
+  @media (max-width: 500px) {
+    .lineup-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span><span class="dot"></span> <span class="hi">SHIELD PROS</span> // SoCal Ops Online</span>
+    <span><span class="cy">SYS_v4.0</span> // Tactical Build Engaged</span>
+    <span>// 43 Tools In Stock</span>
+    <span><span class="hi">Free Ship $75+</span></span>
+    <span>// Films Coming Soon</span>
+    <span><span class="cy">PRO_GRADE</span> // Built For Installers</span>
+    <span>// Shipping From Southern California</span>
+    <!-- duplicate for seamless loop -->
+    <span><span class="dot"></span> <span class="hi">SHIELD PROS</span> // SoCal Ops Online</span>
+    <span><span class="cy">SYS_v4.0</span> // Tactical Build Engaged</span>
+    <span>// 43 Tools In Stock</span>
+    <span><span class="hi">Free Ship $75+</span></span>
+    <span>// Films Coming Soon</span>
+    <span><span class="cy">PRO_GRADE</span> // Built For Installers</span>
+    <span>// Shipping From Southern California</span>
+  </div>
+</div>
+
+<!-- BACKGROUND LAYERS -->
+<div class="grid-bg"></div>
+<div class="noise"></div>
+<div class="scanlines"></div>
+
+<!-- HUD CORNERS -->
+<div class="hud tl"><span class="dot rec-dot"></span>REC // LIVE FEED</div>
+<div class="hud tr"><span class="line">// SHIELD_PROS_v4</span><br>EST. SOCAL</div>
+<div class="hud bl"><span class="line">// 34.05N 118.24W</span><br>PRECISION_MODE</div>
+<div class="hud br"><span class="dot"></span>SYS_ONLINE</div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <div class="shield"></div>
+    <div class="logo-text">SHIELD<span>PROS</span></div>
+  </div>
+  <nav>
+    <ul>
+      <li><a href="#tools">Tools</a></li>
+      <li><a href="#lineup">Lineup</a></li>
+      <li><a href="#films">Films</a></li>
+      <li><a href="#crafted">Crafted</a></li>
+      <li><a href="#about">About</a></li>
+    </ul>
+  </nav>
+  <button class="cart-pill">⬢ Cart (0)</button>
+</header>
+
+<!-- HERO V4: CINEMATIC -->
+<section class="hero">
+  <div class="hero-video-wrap">
+    <!-- Drop your hero video file in the same folder and set the src below -->
+    <video id="hero-video" autoplay muted loop playsinline poster="" style="display:none;">
+      <source src="hero-bg.mp4" type="video/mp4">
+    </video>
+    <div class="video-fallback" id="video-fallback"></div>
+  </div>
+  <div class="hero-overlay"></div>
+
+  <!-- Ambient hex orbit kept at very low opacity for depth -->
+  <div class="hex-orbit-ambient">
+    <div class="hex large h3"></div>
+    <div class="hex h1"></div>
+    <div class="hex small h2"></div>
+    <div class="hex h4"></div>
+    <div class="hex small h5"></div>
+  </div>
+
+  <div class="hero-content" id="hero-parallax">
+    <div class="hero-tag reveal">PREMIUM TINTING TOOLS // EST. SOCAL</div>
+    <h1 class="reveal reveal-delay-1">
+      <span class="glitch" data-text="BUILT FOR">BUILT FOR</span><br>
+      <span class="italic">precision.</span>
+    </h1>
+    <p class="hero-sub reveal reveal-delay-2">Professional-grade window tinting tools and accessories. Engineered for installers who refuse to compromise.</p>
+    <div class="hero-cta reveal reveal-delay-3">
+      <a href="#tools" class="btn btn-gold">Shop Tools →</a>
+      <a href="#crafted" class="btn btn-ghost">Our Story</a>
+    </div>
+  </div>
+
+  <div class="scroll-cue">
+    <span>Scroll</span>
+    <span class="bar"></span>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stats-grid">
+    <div class="stat reveal"><div class="stat-num">43<span class="mono">+</span></div><div class="stat-label">Products</div></div>
+    <div class="stat reveal reveal-delay-1"><div class="stat-num">15<span class="mono">YR</span></div><div class="stat-label">In The Game</div></div>
+    <div class="stat reveal reveal-delay-2"><div class="stat-num">100<span class="mono">%</span></div><div class="stat-label">Pro Grade</div></div>
+    <div class="stat reveal reveal-delay-3"><div class="stat-num">FREE</div><div class="stat-label">Ship $75+</div></div>
+  </div>
+</div>
+
+<!-- CRAFTED SECTION -->
+<section id="crafted" class="section-pad">
+  <div class="crafted">
+    <div class="crafted-visual reveal" id="crafted-visual">
+      <span class="corner-tag">// IMG_001</span>
+      <img class="crafted-img" src="" alt="">
+      <div class="hex-deco"></div>
+      <div class="hex-deco inner"></div>
+      <div class="img-label">// crafted_with_intent.jpg</div>
+    </div>
+    <div class="crafted-text reveal reveal-delay-1">
+      <div class="section-tag">Built Different</div>
+      <h2>Tools <span class="italic">crafted</span><br>for the trade.</h2>
+      <p>Every squeegee, blade, and accessory in our lineup is field-tested by installers who do this for a living. No fluff. No filler. Just tools that hold up.</p>
+      <p>From the budget kit that gets you started to the premium gear that pays for itself — we cover every tier of the craft.</p>
+      <div class="meta">
+        <div class="meta-item"><div class="key">Starting At</div><div class="val">$1.25</div></div>
+        <div class="meta-item"><div class="key">Pro Tier</div><div class="val">$225</div></div>
+        <div class="meta-item"><div class="key">Ships From</div><div class="val">SoCal</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section id="tools" class="section-pad" style="padding-top: 0;">
+  <div class="products-wrap">
+    <div class="section-head reveal">
+      <div class="section-tag">The Catalog</div>
+      <h2 class="section-title">Every <span class="italic">tool</span> you need.</h2>
+    </div>
+    <div class="filter-row reveal reveal-delay-1">
+      <button class="filter-chip active" data-filter="all">All</button>
+      <button class="filter-chip" data-filter="premium">Premium</button>
+      <button class="filter-chip" data-filter="mid">Mid-Tier</button>
+      <button class="filter-chip" data-filter="budget">Budget</button>
+      <button class="filter-chip" data-filter="squeegees">Squeegees</button>
+      <button class="filter-chip" data-filter="blades">Blades</button>
+      <button class="filter-chip" data-filter="ppf">PPF</button>
+    </div>
+    <div class="products">
+      <!-- Catalog v2 — generated from Square XLSX export. All 44 products including hidden "blue max". -->
+      <!-- Stock badges use real qty: 0=Sold Out, 1-3=Low Stock, 4+=in stock. SKUs preserved as data-sku for cart/admin wiring. -->
+
+      <!-- =========================== -->
+      <!-- PREMIUM TIER ($20+) -->
+      <!-- =========================== -->
+      <div class="product reveal" data-tier="premium" data-cat="ppf" data-sku="710550B" data-stock="low">
+        <div class="product-img"><span class="product-badge low">Low Stock (1)</span><img src="" alt="headlight and taillight ppf"><div class="hex-placeholder"></div></div><!-- NO PHOTO YET -->
+        <div class="product-body"><div class="product-cat">PPF // Headlight & Taillight</div><div class="product-name">headlight and taillight ppf</div><div class="product-foot"><div class="product-price">$225.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-1" data-tier="premium" data-cat="storage" data-sku="L825473">
+        <div class="product-img has-img"><span class="product-badge">Premium</span><img src="images/chest-pouch.jpeg" alt="chest pouch"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Storage // Pouch</div><div class="product-name">chest pouch</div><div class="product-foot"><div class="product-price">$65.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-2" data-tier="premium" data-cat="sprayers" data-sku="126020D" data-stock="low">
+        <div class="product-img has-img"><span class="product-badge low">Low Stock (2)</span><img src="images/shield-pros-coiled-hose-and-sprayer-system.jpeg" alt="Shield Pros Coiled Hose &amp; Sprayer System 🛡️"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Sprayers // System</div><div class="product-name">Shield Pros Coiled Hose &amp; Sprayer System 🛡️</div><div class="product-foot"><div class="product-price">$60.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-3" data-tier="premium" data-cat="squeegees" data-sku="J790893" data-stock="out">
+        <div class="product-img has-img"><span class="product-badge out">Out of Stock</span><img src="images/light-squeegee.jpeg" alt="light squeegee"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Squeegees // Light</div><div class="product-name">light squeegee</div><div class="product-foot"><div class="product-price">$50.00</div><button class="prod-add" disabled style="opacity:0.4;cursor:not-allowed">Sold Out</button></div></div>
+      </div>
+      <div class="product reveal" data-tier="premium" data-cat="ppf" data-sku="2785105" data-stock="out">
+        <div class="product-img has-img"><span class="product-badge out">Out of Stock</span><img src="images/ppf-set-blue.jpeg" alt="ppf set blue"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">PPF // Sets</div><div class="product-name">ppf set blue</div><div class="product-foot"><div class="product-price">$30.00</div><button class="prod-add" disabled style="opacity:0.4;cursor:not-allowed">Sold Out</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-1" data-tier="premium" data-cat="ppf" data-sku="804894W" data-stock="low">
+        <div class="product-img has-img"><span class="product-badge low">Low Stock (2)</span><img src="images/ppf-set-pink.jpeg" alt="ppf set pink"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">PPF // Sets</div><div class="product-name">ppf set pink</div><div class="product-foot"><div class="product-price">$30.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-2" data-tier="premium" data-cat="prep" data-sku="T548317" data-stock="out">
+        <div class="product-img has-img"><span class="product-badge out">Out of Stock</span><img src="images/tint-brush.jpeg" alt="tint brush"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Prep // Brush</div><div class="product-name">tint brush</div><div class="product-foot"><div class="product-price">$30.00</div><button class="prod-add" disabled style="opacity:0.4;cursor:not-allowed">Sold Out</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-3" data-tier="premium" data-cat="lighting" data-sku="665076M" data-stock="low">
+        <div class="product-img has-img"><span class="product-badge low">Low Stock (2)</span><img src="images/led-light.jpeg" alt="led light"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Lighting // LED</div><div class="product-name">led light</div><div class="product-foot"><div class="product-price">$29.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal" data-tier="premium" data-cat="prep" data-sku="3318329" data-stock="low">
+        <div class="product-img has-img"><span class="product-badge low">Low Stock (2)</span><img src="images/hand-scrubber.jpeg" alt="hand scrubber"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Prep // Hand</div><div class="product-name">hand scrubber</div><div class="product-foot"><div class="product-price">$20.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <!-- =========================== -->
+      <!-- MID-TIER ($10–$19) -->
+      <!-- =========================== -->
+      <div class="product reveal reveal-delay-1" data-tier="mid" data-cat="squeegees" data-sku="V298359">
+        <div class="product-img has-img"><span class="product-badge cyan">Mid-Tier</span><img src="images/bull-dozer.jpeg" alt="bull dozer"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Squeegees // Bulldozer</div><div class="product-name">bull dozer</div><div class="product-foot"><div class="product-price">$18.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-2" data-tier="mid" data-cat="squeegees" data-sku="3852085" data-stock="low">
+        <div class="product-img has-img"><span class="product-badge low">Low Stock (2)</span><img src="images/long-handle-reach-squeegees.jpeg" alt="Long handle reach Squeegees"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Squeegees // Reach</div><div class="product-name">Long handle reach Squeegees</div><div class="product-foot"><div class="product-price">$18.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-3" data-tier="mid" data-cat="storage" data-sku="N316949">
+        <div class="product-img has-img"><span class="product-badge cyan">Mid-Tier</span><img src="images/tool-pouch-1.jpeg" alt="Tool pouch 1"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Storage // Pouch</div><div class="product-name">Tool pouch 1</div><div class="product-foot"><div class="product-price">$18.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal" data-tier="mid" data-cat="storage" data-sku="713356F">
+        <div class="product-img has-img"><span class="product-badge cyan">Mid-Tier</span><img src="images/tool-pouch-2.jpeg" alt="tool pouch 2"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Storage // Pouch</div><div class="product-name">tool pouch 2</div><div class="product-foot"><div class="product-price">$18.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-1" data-tier="mid" data-cat="squeegees" data-sku="2701692" data-stock="low">
+        <div class="product-img has-img"><span class="product-badge low">Low Stock (2)</span><img src="images/blue-titan.png" alt="Blue Titan"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Squeegees // Titan</div><div class="product-name">Blue Titan</div><div class="product-foot"><div class="product-price">$15.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-2" data-tier="mid" data-cat="squeegees" data-sku="J886413">
+        <div class="product-img has-img"><span class="product-badge cyan">Mid-Tier</span><img src="images/bulldozer-red-black-blue.png" alt="Bulldozer red black blue"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Squeegees // Bulldozer</div><div class="product-name">Bulldozer red black and blue</div><div class="product-foot"><div class="product-price">$15.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-3" data-tier="mid" data-cat="squeegees" data-sku="554171H">
+        <div class="product-img has-img"><span class="product-badge cyan">Mid-Tier</span><img src="images/green-handle-with-blade.jpeg" alt="green handle with blade"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Handles // w/ Blade</div><div class="product-name">green handle with blade</div><div class="product-foot"><div class="product-price">$15.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal" data-tier="mid" data-cat="squeegees" data-sku="L233862">
+        <div class="product-img has-img"><span class="product-badge cyan">Mid-Tier</span><img src="images/long-straight-squeegee.png" alt="long straight squeegee with handle"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Handles // Plastic</div><div class="product-name">long straight squeegee w handle</div><div class="product-foot"><div class="product-price">$15.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-1" data-tier="mid" data-cat="squeegees" data-sku="695984P">
+        <div class="product-img has-img"><span class="product-badge cyan">Mid-Tier</span><img src="images/red-titan.jpeg" alt="Red Titan"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Squeegees // Titan</div><div class="product-name">Red Titan</div><div class="product-foot"><div class="product-price">$15.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-2" data-tier="mid" data-cat="prep" data-sku="367231E" data-stock="low">
+        <div class="product-img has-img"><span class="product-badge low">Low Stock (3)</span><img src="images/soak-rope.jpeg" alt="soak rope"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Prep // Rope</div><div class="product-name">soak rope</div><div class="product-foot"><div class="product-price">$15.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-3" data-tier="mid" data-cat="squeegees" data-sku="307089F">
+        <div class="product-img"><span class="product-badge cyan">Mid-Tier</span><img src="" alt="Squeegees &amp; handle short or long with blade"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Handles // w/ Blade</div><div class="product-name">Squeegees &amp; handle short or long with blade</div><div class="product-foot"><div class="product-price">$15.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal" data-tier="mid" data-cat="squeegees" data-sku="5531768" data-stock="out">
+        <div class="product-img has-img"><span class="product-badge out">Out of Stock</span><img src="images/wrap-squeeges-3-set.png" alt="wrap squeeges 3 set"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Squeegees // Wrap Set</div><div class="product-name">wrap squeeges 3 set</div><div class="product-foot"><div class="product-price">$15.00</div><button class="prod-add" disabled style="opacity:0.4;cursor:not-allowed">Sold Out</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-1" data-tier="mid" data-cat="squeegees" data-sku="Y698239">
+        <div class="product-img"><span class="product-badge cyan">Mid-Tier</span><img src="" alt="plastic handle small"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Handles // Plastic</div><div class="product-name">plastic handle small</div><div class="product-foot"><div class="product-price">$13.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-2" data-tier="mid" data-cat="tape" data-sku="2833893" data-stock="low">
+        <div class="product-img has-img"><span class="product-badge low">Low Stock (1)</span><img src="images/shield-tape.jpeg" alt="shield tape"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Tape // Shield</div><div class="product-name">shield tape</div><div class="product-foot"><div class="product-price">$12.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-3" data-tier="mid" data-cat="tools" data-sku="D341361">
+        <div class="product-img has-img"><span class="product-badge cyan">Mid-Tier</span><img src="images/corner-tools-set-2.jpeg" alt="coner tool set 2"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Tools // Corner</div><div class="product-name">coner tool set 2</div><div class="product-foot"><div class="product-price">$10.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal" data-tier="mid" data-cat="squeegees" data-sku="G780589">
+        <div class="product-img has-img"><span class="product-badge cyan">Mid-Tier</span><img src="images/quarter-glass-set.png" alt="quarter glass squeegee set"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Squeegees // Quarter Glass</div><div class="product-name">quarter glass squeege set</div><div class="product-foot"><div class="product-price">$10.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-1" data-tier="mid" data-cat="blades" data-sku="2135515" data-stock="out">
+        <div class="product-img has-img"><span class="product-badge out">Out of Stock</span><img src="images/squeegee-blade-set.png" alt="squeegee blade set"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Blades // Squeegee Set</div><div class="product-name">squeege blade set</div><div class="product-foot"><div class="product-price">$10.00</div><button class="prod-add" disabled style="opacity:0.4;cursor:not-allowed">Sold Out</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-2" data-tier="mid" data-cat="prep" data-sku="C420878">
+        <div class="product-img has-img"><span class="product-badge cyan">Mid-Tier</span><img src="images/window-scrubber.png" alt="window scrubber"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Prep // Window</div><div class="product-name">Window scrubber</div><div class="product-foot"><div class="product-price">$10.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-3" data-tier="mid" data-cat="tools" data-sku="1349225">
+        <div class="product-img has-img"><span class="product-badge cyan">Mid-Tier</span><img src="images/wrap-gloves.jpeg" alt="wrap gloves"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Accessories // Gloves</div><div class="product-name">wrap gloves</div><div class="product-foot"><div class="product-price">$10.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <!-- =========================== -->
+      <!-- BUDGET (under $10) -->
+      <!-- =========================== -->
+      <div class="product reveal" data-tier="budget" data-cat="squeegees" data-sku="200772V" data-stock="out">
+        <div class="product-img has-img"><span class="product-badge out">Out of Stock</span><img src="images/blue-max.png" alt="blue max"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Squeegees // Power</div><div class="product-name">blue max</div><div class="product-foot"><div class="product-price">$8.00</div><button class="prod-add" disabled style="opacity:0.4;cursor:not-allowed">Sold Out</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-1" data-tier="budget" data-cat="sprayers" data-sku="7492874">
+        <div class="product-img has-img"><span class="product-badge">Budget</span><img src="images/gasket-hook.jpeg" alt="gasket hook"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Sprayers // Parts</div><div class="product-name">gasket hook</div><div class="product-foot"><div class="product-price">$8.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-2" data-tier="budget" data-cat="tools" data-sku="6923245" data-stock="low">
+        <div class="product-img has-img"><span class="product-badge low">Low Stock (2)</span><img src="images/corner-tools-set.png" alt="corner tools set"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Tools // Corner</div><div class="product-name">corner tools set</div><div class="product-foot"><div class="product-price">$7.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-3" data-tier="budget" data-cat="blades" data-sku="960373Y">
+        <div class="product-img has-img"><span class="product-badge">Budget</span><img src="images/metal-utility-blades.jpeg" alt="metal utility blades"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Blades // Utility</div><div class="product-name">metal utility blades</div><div class="product-foot"><div class="product-price">$7.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal" data-tier="budget" data-cat="squeegees" data-sku="N302873">
+        <div class="product-img has-img"><span class="product-badge">Budget</span><img src="images/double-channel-prep.png" alt="double channel prep squeegee"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Squeegees // Prep</div><div class="product-name">double channel prep squeege</div><div class="product-foot"><div class="product-price">$5.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-1" data-tier="budget" data-cat="squeegees" data-sku="G949814">
+        <div class="product-img has-img"><span class="product-badge">Budget</span><img src="images/half-moon-squeege.jpeg" alt="Half moon squeege"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Squeegees // Half Moon</div><div class="product-name">Half moon squeege</div><div class="product-foot"><div class="product-price">$5.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-2" data-tier="budget" data-cat="tools" data-sku="655947M">
+        <div class="product-img has-img"><span class="product-badge">Budget</span><img src="images/slammer.jpeg" alt="slammer"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Tools // Slammer</div><div class="product-name">slammer</div><div class="product-foot"><div class="product-price">$5.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-3" data-tier="budget" data-cat="squeegees" data-sku="633677T">
+        <div class="product-img has-img"><span class="product-badge">Budget</span><img src="images/window-squeege.jpeg" alt="window squeege"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Squeegees // Window</div><div class="product-name">window squeege</div><div class="product-foot"><div class="product-price">$5.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal" data-tier="budget" data-cat="squeegees" data-sku="565287V">
+        <div class="product-img has-img"><span class="product-badge">Budget</span><img src="images/quarter-glass-squeege.jpeg" alt="quarter glass squeege"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Squeegees // Quarter Glass</div><div class="product-name">quarter glass squeege</div><div class="product-foot"><div class="product-price">$4.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-1" data-tier="budget" data-cat="tools" data-sku="920716X">
+        <div class="product-img has-img"><span class="product-badge">Budget</span><img src="images/blue-non-scratch-corner.png" alt="blue non scratch corner tool"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Tools // Corner</div><div class="product-name">blue non scratch corner tool</div><div class="product-foot"><div class="product-price">$3.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-2" data-tier="budget" data-cat="cards" data-sku="7552301" data-stock="out">
+        <div class="product-img has-img"><span class="product-badge out">Out of Stock</span><img src="images/hard-card.jpeg" alt="hard card"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Cards // Hard</div><div class="product-name">hard card</div><div class="product-foot"><div class="product-price">$3.00</div><button class="prod-add" disabled style="opacity:0.4;cursor:not-allowed">Sold Out</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-3" data-tier="budget" data-cat="cards" data-sku="966413X">
+        <div class="product-img"><span class="product-badge">Budget</span><img src="" alt="round hard card"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Cards // Round</div><div class="product-name">round hard card</div><div class="product-foot"><div class="product-price">$3.00</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal" data-tier="budget" data-cat="prep" data-sku="7263649">
+        <div class="product-img has-img"><span class="product-badge">Budget</span><img src="images/lint-free-prep-towels.jpeg" alt="lint free prep towels"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Prep // Towels</div><div class="product-name">lint free prep towels</div><div class="product-foot"><div class="product-price">$2.50</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-1" data-tier="budget" data-cat="sprayers" data-sku="5237766">
+        <div class="product-img has-img"><span class="product-badge">Budget</span><img src="images/nozzle-head.jpeg" alt="nozzle head"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Sprayers // Parts</div><div class="product-name">nozzle head</div><div class="product-foot"><div class="product-price">$2.50</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-2" data-tier="budget" data-cat="sprayers" data-sku="L475081">
+        <div class="product-img"><span class="product-badge">Budget</span><img src="" alt="gasket shank"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Sprayers // Parts</div><div class="product-name">gasket shank</div><div class="product-foot"><div class="product-price">$1.25</div><button class="prod-add">Add +</button></div></div>
+      </div>
+      <div class="product reveal reveal-delay-3" data-tier="budget" data-cat="blades" data-sku="C767418">
+        <div class="product-img has-img"><span class="product-badge">Budget</span><img src="images/prep-blade.jpeg" alt="prep blade"><div class="hex-placeholder"></div></div>
+        <div class="product-body"><div class="product-cat">Blades // Prep</div><div class="product-name">prep blade</div><div class="product-foot"><div class="product-price">$1.25</div><button class="prod-add">Add +</button></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THE LINEUP — SHOWCASE GALLERY -->
+<section id="lineup" class="section-pad">
+  <div class="lineup-wrap">
+    <div class="section-head reveal">
+      <div class="section-tag">The Lineup</div>
+      <h2 class="section-title">The whole <span class="italic">arsenal</span>, on display.</h2>
+    </div>
+    <div class="lineup-grid" id="lineup-grid">
+      <!-- Tiles populated by JS from window.LINEUP_IMAGES -->
+    </div>
+    <div class="lineup-hud reveal">
+      <span><span class="lineup-hud-dot"></span>SHOWCASE // 35 ASSETS</span>
+      <span>CLICK ANY TILE TO ENLARGE</span>
+    </div>
+  </div>
+</section>
+
+<!-- LIGHTBOX -->
+<div class="lineup-lightbox" id="lineup-lightbox" role="dialog" aria-label="Image viewer">
+  <button class="lb-close" id="lb-close" aria-label="Close">✕</button>
+  <button class="lb-prev" id="lb-prev" aria-label="Previous">‹</button>
+  <img id="lb-image" src="" alt="">
+  <button class="lb-next" id="lb-next" aria-label="Next">›</button>
+  <div class="lb-counter">
+    <span id="lb-current">01</span>
+    <span class="lb-counter-bar"></span>
+    <span id="lb-total">35</span>
+  </div>
+</div>
+
+<!-- FILMS COMING SOON -->
+<section id="films" class="films section-pad">
+  <div class="films-grid">
+    <div class="films-text reveal">
+      <div class="section-tag">Coming Soon</div>
+      <h2>Films, <span class="italic">dropping</span> soon.</h2>
+      <p>Our lineup of premium window films is launching this season. Ceramic, carbon, and color-stable — built to spec for installers who only run quality material.</p>
+      <p>Drop your email below to get first access when films go live.</p>
+      <div class="countdown">
+        <div class="count-box"><div class="count-num">45</div><div class="count-lbl">Days</div></div>
+        <div class="count-box"><div class="count-num">12</div><div class="count-lbl">Hrs</div></div>
+        <div class="count-box"><div class="count-num">38</div><div class="count-lbl">Min</div></div>
+      </div>
+    </div>
+    <div class="films-visual reveal reveal-delay-1">
+      <span class="corner-tag">// PREVIEW_REEL</span>
+      <video id="films-video" autoplay muted loop playsinline style="display:none;">
+        <source src="films-preview.mp4" type="video/mp4">
+      </video>
+      <div class="films-vid-fallback" id="films-vid-fallback"></div>
+      <div class="play"></div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIAL -->
+<section class="section-pad">
+  <div class="testimonial-section reveal">
+    <div class="quote-mark">"</div>
+    <div class="testimonial-quote">These tools changed how I run my install bay. The bull dozer alone saves me 20 minutes a vehicle.</div>
+    <div class="testimonial-author">
+      <div class="author-avatar">JR</div>
+      <div class="author-info">
+        <div class="author-name">Jose Ramirez</div>
+        <div class="author-title">// Pro Installer · LA</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="newsletter section-pad">
+  <div class="newsletter-inner reveal">
+    <div class="section-tag" style="text-align:center;">Stay Locked In</div>
+    <h2>Get the <span class="italic">drops</span> first.</h2>
+    <p>New products, restocks, and pro tips. No spam — just the goods.</p>
+    <div class="nl-form">
+      <input type="email" placeholder="your@email.com">
+      <button class="btn btn-gold">Subscribe →</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo">
+        <div class="shield"></div>
+        <div class="logo-text">SHIELD<span>PROS</span></div>
+      </div>
+      <p>Premium window tinting tools and accessories. Built for installers, by installers. Shipping from Southern California.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Shop</h4>
+      <ul>
+        <li><a href="#tools">All Tools</a></li>
+        <li><a href="#">Premium</a></li>
+        <li><a href="#">Mid-Tier</a></li>
+        <li><a href="#">Budget</a></li>
+        <li><a href="#films">Films (Soon)</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <ul>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">Shipping</a></li>
+        <li><a href="#">Returns</a></li>
+        <li><a href="#">FAQ</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Follow</h4>
+      <ul>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">TikTok</a></li>
+        <li><a href="#">YouTube</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div>© 2026 SHIELD PROS FILMS & TOOLS</div>
+    <div>// BUILT IN SOCAL</div>
+  </div>
+</footer>
+
+<!-- CART OVERLAY + PANEL -->
+<div class="cart-overlay" id="cart-overlay"></div>
+<aside class="cart-panel" id="cart-panel" aria-label="Shopping cart" role="dialog">
+  <div class="cart-header">
+    <div class="cart-title">⬢ <span>Your Cart</span></div>
+    <button class="cart-close" id="cart-close" aria-label="Close cart">✕</button>
+  </div>
+  <div class="cart-items" id="cart-items"></div>
+  <div class="cart-footer" id="cart-footer" style="display:none;">
+    <div class="cart-totals">
+      <div class="cart-row"><span>Subtotal</span><span id="cart-subtotal">$0.00</span></div>
+      <div class="cart-row"><span id="ship-label">Shipping</span><span id="cart-shipping">$0.00</span></div>
+      <div class="cart-row total"><span>Total</span><span class="amount" id="cart-total">$0.00</span></div>
+    </div>
+    <button class="cart-checkout" id="cart-checkout">Checkout →</button>
+    <div class="cart-loading" id="cart-loading">// Connecting to Stripe...</div>
+    <div class="cart-shipping-note" id="ship-progress"></div>
+  </div>
+</aside>
+
+<script>
+  // === CART (localStorage backed) + STRIPE CHECKOUT ===
+  const CART_KEY = 'shieldpros_cart_v1';
+  const FREE_SHIP_THRESHOLD = 75;
+  const FLAT_SHIPPING = 8.99;
+  let cart = [];
+  try { cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]'); } catch(e) { cart = []; }
+
+  const cartBtn = document.querySelector('.cart-pill');
+  const cartPanel = document.getElementById('cart-panel');
+  const cartOverlay = document.getElementById('cart-overlay');
+  const cartClose = document.getElementById('cart-close');
+  const cartItemsEl = document.getElementById('cart-items');
+  const cartFooterEl = document.getElementById('cart-footer');
+  const cartSubtotalEl = document.getElementById('cart-subtotal');
+  const cartShippingEl = document.getElementById('cart-shipping');
+  const cartTotalEl = document.getElementById('cart-total');
+  const shipLabelEl = document.getElementById('ship-label');
+  const shipProgressEl = document.getElementById('ship-progress');
+  const checkoutBtn = document.getElementById('cart-checkout');
+  const cartLoading = document.getElementById('cart-loading');
+
+  function saveCart() {
+    try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); } catch(e) {}
+  }
+  function cartItemCount() { return cart.reduce((s, i) => s + i.qty, 0); }
+  function updateCartBadge() {
+    cartBtn.innerHTML = `⬢ Cart (${cartItemCount()})`;
+  }
+  function getProductImg(sku) {
+    const card = document.querySelector(`.product[data-sku="${sku}"]`);
+    if (!card) return null;
+    const img = card.querySelector('.product-img.has-img img');
+    return img && img.getAttribute('src') ? img.getAttribute('src') : null;
+  }
+
+  function renderCart() {
+    if (cart.length === 0) {
+      cartItemsEl.innerHTML = `
+        <div class="cart-empty">
+          <div class="cart-empty-hex"></div>
+          <p>Your cart is empty.</p>
+          <p style="font-size:11px;color:var(--text-mute);margin-top:8px;font-family:'JetBrains Mono',monospace;letter-spacing:1.5px;">// ADD SOMETHING TO GET STARTED</p>
+        </div>`;
+      cartFooterEl.style.display = 'none';
+      return;
+    }
+    cartFooterEl.style.display = 'block';
+    cartItemsEl.innerHTML = cart.map(item => {
+      const imgSrc = getProductImg(item.sku);
+      const imgHtml = imgSrc ? `<img src="${imgSrc}" alt="${item.name}">` : `<div class="hex-mini"></div>`;
+      return `
+        <div class="cart-item" data-sku="${item.sku}">
+          <div class="cart-item-img">${imgHtml}</div>
+          <div class="cart-item-info">
+            <div class="cart-item-name">${item.name}</div>
+            <div class="cart-item-price">$${item.price.toFixed(2)} ea</div>
+          </div>
+          <div class="cart-item-actions">
+            <div class="cart-qty">
+              <button data-act="dec" aria-label="Decrease">−</button>
+              <span>${item.qty}</span>
+              <button data-act="inc" aria-label="Increase">+</button>
+            </div>
+            <button class="cart-remove" data-act="rm">Remove</button>
+          </div>
+        </div>`;
+    }).join('');
+    // wire qty + remove
+    cartItemsEl.querySelectorAll('.cart-item').forEach(el => {
+      const sku = el.dataset.sku;
+      el.querySelectorAll('button[data-act]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const item = cart.find(i => i.sku === sku);
+          if (!item) return;
+          if (btn.dataset.act === 'inc') item.qty++;
+          else if (btn.dataset.act === 'dec') {
+            item.qty--;
+            if (item.qty <= 0) cart = cart.filter(i => i.sku !== sku);
+          } else if (btn.dataset.act === 'rm') cart = cart.filter(i => i.sku !== sku);
+          saveCart(); renderCart(); updateCartBadge();
+        });
+      });
+    });
+    // totals
+    const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+    const shipping = subtotal >= FREE_SHIP_THRESHOLD ? 0 : FLAT_SHIPPING;
+    const total = subtotal + shipping;
+    cartSubtotalEl.textContent = `$${subtotal.toFixed(2)}`;
+    if (shipping === 0) {
+      cartShippingEl.textContent = 'FREE';
+      cartShippingEl.style.color = '#4ade80';
+      shipProgressEl.textContent = '// FREE SHIPPING UNLOCKED ✓';
+      shipProgressEl.style.color = '#4ade80';
+    } else {
+      cartShippingEl.textContent = `$${shipping.toFixed(2)}`;
+      cartShippingEl.style.color = '';
+      const remaining = (FREE_SHIP_THRESHOLD - subtotal).toFixed(2);
+      shipProgressEl.textContent = `// $${remaining} MORE FOR FREE SHIPPING`;
+      shipProgressEl.style.color = '';
+    }
+    cartTotalEl.textContent = `$${total.toFixed(2)}`;
+  }
+
+  function openCart() {
+    cartPanel.classList.add('open');
+    cartOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeCart() {
+    cartPanel.classList.remove('open');
+    cartOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  cartBtn.addEventListener('click', openCart);
+  cartClose.addEventListener('click', closeCart);
+  cartOverlay.addEventListener('click', closeCart);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && cartPanel.classList.contains('open')) closeCart();
+  });
+
+  // Wire add-to-cart on every product card
+  document.querySelectorAll('.product').forEach(card => {
+    const sku = card.dataset.sku;
+    const name = card.querySelector('.product-name')?.textContent.trim() || '';
+    const priceText = card.querySelector('.product-price')?.textContent.trim() || '$0';
+    const price = parseFloat(priceText.replace(/[^0-9.]/g, '')) || 0;
+    const addBtn = card.querySelector('.prod-add:not([disabled])');
+    if (!addBtn || !sku) return;
+    addBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const existing = cart.find(i => i.sku === sku);
+      if (existing) existing.qty++;
+      else cart.push({ sku, name, price, qty: 1 });
+      saveCart(); renderCart(); updateCartBadge();
+      // visual feedback
+      const original = addBtn.textContent;
+      addBtn.textContent = 'Added ✓';
+      addBtn.style.background = 'var(--gold)';
+      addBtn.style.color = 'var(--bg)';
+      addBtn.style.borderColor = 'var(--gold)';
+      setTimeout(() => {
+        addBtn.textContent = original;
+        addBtn.style.background = '';
+        addBtn.style.color = '';
+        addBtn.style.borderColor = '';
+      }, 1500);
+    });
+  });
+
+  // Checkout → backend → Stripe
+  checkoutBtn.addEventListener('click', async () => {
+    if (cart.length === 0) return;
+    checkoutBtn.disabled = true;
+    cartLoading.classList.add('show');
+    cartLoading.textContent = '// Connecting to Stripe...';
+    cartLoading.style.color = '';
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: cart })
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+        throw new Error(err.error || `HTTP ${res.status}`);
+      }
+      const data = await res.json();
+      if (data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      } else {
+        throw new Error('No checkout URL returned');
+      }
+    } catch (err) {
+      console.error('Checkout error:', err);
+      cartLoading.textContent = `// Error: ${err.message}`;
+      cartLoading.style.color = '#ff6b6b';
+      checkoutBtn.disabled = false;
+      setTimeout(() => { cartLoading.classList.remove('show'); }, 5000);
+    }
+  });
+
+  // initial render
+  updateCartBadge();
+  renderCart();
+
+  // === FILTER CHIPS ===
+  document.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      const filter = chip.dataset.filter;
+      document.querySelectorAll('.product').forEach(p => {
+        if (filter === 'all') {
+          p.style.display = '';
+        } else {
+          const matchTier = p.dataset.tier === filter;
+          const matchCat = p.dataset.cat === filter;
+          p.style.display = (matchTier || matchCat) ? '' : 'none';
+        }
+      });
+    });
+  });
+
+  // === SCROLL REVEAL ===
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+  // === HERO MOUSE PARALLAX ===
+  const heroParallax = document.getElementById('hero-parallax');
+  const hexOrbit = document.querySelector('.hex-orbit-ambient');
+  document.querySelector('.hero').addEventListener('mousemove', (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    if (heroParallax) heroParallax.style.transform = `translate(${x * -14}px, ${y * -14}px)`;
+    if (hexOrbit) hexOrbit.style.transform = `translate(calc(-50% + ${x * 30}px), calc(-50% + ${y * 30}px))`;
+  });
+
+  // === PRODUCT CARD TILT ===
+  document.querySelectorAll('.product').forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      card.style.transform = `perspective(900px) rotateX(${y * -6}deg) rotateY(${x * 8}deg) translateY(-4px)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+    });
+  });
+
+  // === HERO VIDEO LOAD CHECK ===
+  // If hero-bg.mp4 isn't in the folder, the fallback gradient stays visible.
+  const heroVideo = document.getElementById('hero-video');
+  const videoFallback = document.getElementById('video-fallback');
+  if (heroVideo) {
+    heroVideo.addEventListener('loadeddata', () => {
+      heroVideo.style.display = 'block';
+      if (videoFallback) videoFallback.style.display = 'none';
+    });
+    heroVideo.addEventListener('error', () => {
+      heroVideo.style.display = 'none';
+      if (videoFallback) videoFallback.style.display = 'block';
+    });
+  }
+
+  const filmsVideo = document.getElementById('films-video');
+  const filmsFallback = document.getElementById('films-vid-fallback');
+  if (filmsVideo) {
+    filmsVideo.addEventListener('loadeddata', () => {
+      filmsVideo.style.display = 'block';
+      if (filmsFallback) filmsFallback.style.display = 'none';
+    });
+    filmsVideo.addEventListener('error', () => {
+      filmsVideo.style.display = 'none';
+      if (filmsFallback) filmsFallback.style.display = 'block';
+    });
+  }
+
+  // === HELPER: SET PRODUCT IMAGE ===
+  // From console: setProductImage('Bull Dozer', 'images/bull-dozer.jpg')
+  window.setProductImage = function(productName, src) {
+    document.querySelectorAll('.product').forEach(p => {
+      const name = p.querySelector('.product-name')?.textContent.trim();
+      if (name && name.toLowerCase().includes(productName.toLowerCase())) {
+        const wrap = p.querySelector('.product-img');
+        const img = wrap.querySelector('img');
+        img.src = src;
+        img.alt = name;
+        wrap.classList.add('has-img');
+      }
+    });
+  };
+
+  // === HELPER: SET CRAFTED IMAGE ===
+  window.setCraftedImage = function(src) {
+    const wrap = document.getElementById('crafted-visual');
+    const img = wrap.querySelector('.crafted-img');
+    img.src = src;
+    wrap.classList.add('has-img');
+  };
+
+  // === THE LINEUP — GALLERY + LIGHTBOX ===
+  const LINEUP_IMAGES = [
+    { src: 'images/gallery/lineup-01.jpg', label: 'UTILITY KNIVES // 9mm' },
+    { src: 'images/gallery/lineup-02.png', label: 'BLUEMAX CARDS' },
+    { src: 'images/gallery/lineup-03.jpg', label: 'WINDOW SCRAPER' },
+    { src: 'images/gallery/lineup-04.png', label: 'CORNER TOOL SET' },
+    { src: 'images/gallery/lineup-05.jpg', label: 'TINTING SCRAPER' },
+    { src: 'images/gallery/lineup-06.jpg', label: 'PREP MICROFIBER' },
+    { src: 'images/gallery/lineup-07.jpg', label: 'GASKET HOOK' },
+    { src: 'images/gallery/lineup-08.png', label: 'CORNER TOOLS' },
+    { src: 'images/gallery/lineup-09.jpg', label: 'TOOL POUCH' },
+    { src: 'images/gallery/lineup-10.jpg', label: 'PREP BLADE' },
+    { src: 'images/gallery/lineup-11.jpg', label: 'KNIFE LINEUP' },
+    { src: 'images/gallery/lineup-12.jpg', label: 'METAL UTILITY BLADES' },
+    { src: 'images/gallery/lineup-13.jpg', label: 'BULLDOZER' },
+    { src: 'images/gallery/lineup-14.png', label: 'PPF SET' },
+    { src: 'images/gallery/lineup-15.jpg', label: 'SCRAPER + BLADES' },
+    { src: 'images/gallery/lineup-16.jpg', label: 'SQUEEGEE SET' },
+    { src: 'images/gallery/lineup-17.jpg', label: 'TOOL POUCH' },
+    { src: 'images/gallery/lineup-18.png', label: 'TINTING CARD SET' },
+    { src: 'images/gallery/lineup-19.jpg', label: 'SCRAPER' },
+    { src: 'images/gallery/lineup-20.png', label: 'CORNER WRAPS' },
+    { src: 'images/gallery/lineup-21.png', label: 'CORNER TOOL' },
+    { src: 'images/gallery/lineup-22.jpg', label: 'SQUEEGEE BLADES' },
+    { src: 'images/gallery/lineup-23.jpg', label: 'NOZZLE HEAD' },
+    { src: 'images/gallery/lineup-24.jpg', label: 'COILED HOSE' },
+    { src: 'images/gallery/lineup-25.jpg', label: 'SLAMMER' },
+    { src: 'images/gallery/lineup-26.jpg', label: 'SOAK ROPE' },
+    { src: 'images/gallery/lineup-27.jpg', label: 'WRAP GLOVES' },
+    { src: 'images/gallery/lineup-28.jpg', label: 'TOOL POUCH 2' },
+    { src: 'images/gallery/lineup-29.jpg', label: 'HARD CARD' },
+    { src: 'images/gallery/lineup-30.jpg', label: 'HALF MOON SQUEEGEE' },
+    { src: 'images/gallery/lineup-31.jpg', label: 'WINDOW SQUEEGEE' },
+    { src: 'images/gallery/lineup-32.jpg', label: 'LONG HANDLE REACH' },
+    { src: 'images/gallery/lineup-33.jpg', label: 'LIGHT SQUEEGEE' },
+    { src: 'images/gallery/lineup-34.png', label: 'BLUE TITAN' },
+    { src: 'images/gallery/lineup-35.png', label: 'WINDOW SCRUBBER' }
+  ];
+
+  (function initLineup() {
+    const grid = document.getElementById('lineup-grid');
+    const lb = document.getElementById('lineup-lightbox');
+    const lbImg = document.getElementById('lb-image');
+    const lbClose = document.getElementById('lb-close');
+    const lbPrev = document.getElementById('lb-prev');
+    const lbNext = document.getElementById('lb-next');
+    const lbCurrent = document.getElementById('lb-current');
+    const lbTotal = document.getElementById('lb-total');
+    const lbCounterBar = lb && lb.querySelector('.lb-counter-bar');
+    if (!grid || !lb) return;
+
+    let activeIdx = 0;
+    const total = LINEUP_IMAGES.length;
+    if (lbTotal) lbTotal.textContent = String(total).padStart(2, '0');
+
+    // Build tiles
+    LINEUP_IMAGES.forEach((item, idx) => {
+      const tile = document.createElement('div');
+      tile.className = 'lineup-tile';
+      const img = document.createElement('img');
+      img.src = item.src;
+      img.alt = item.label;
+      img.loading = 'lazy';
+      const tag = document.createElement('div');
+      tag.className = 'tile-tag';
+      tag.textContent = item.label;
+      tile.appendChild(img);
+      tile.appendChild(tag);
+      tile.addEventListener('click', () => openLightbox(idx));
+      grid.appendChild(tile);
+    });
+
+    function openLightbox(idx) {
+      activeIdx = idx;
+      updateLightbox();
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox() {
+      lb.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    function updateLightbox() {
+      const item = LINEUP_IMAGES[activeIdx];
+      lbImg.src = item.src;
+      lbImg.alt = item.label;
+      if (lbCurrent) lbCurrent.textContent = String(activeIdx + 1).padStart(2, '0');
+      if (lbCounterBar) {
+        const pct = ((activeIdx + 1) / total) * 100;
+        lbCounterBar.style.setProperty('--lb-progress', pct + '%');
+      }
+    }
+    function next() { activeIdx = (activeIdx + 1) % total; updateLightbox(); }
+    function prev() { activeIdx = (activeIdx - 1 + total) % total; updateLightbox(); }
+
+    lbClose.addEventListener('click', closeLightbox);
+    lbNext.addEventListener('click', next);
+    lbPrev.addEventListener('click', prev);
+    lb.addEventListener('click', (e) => { if (e.target === lb) closeLightbox(); });
+    document.addEventListener('keydown', (e) => {
+      if (!lb.classList.contains('open')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowRight') next();
+      if (e.key === 'ArrowLeft') prev();
+    });
+  })();
+</script>
+</body>
+</html>
