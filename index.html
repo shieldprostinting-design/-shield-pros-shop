@@ -2344,7 +2344,7 @@
       const imgTag = p.imageUrl ? `<img src="${p.imageUrl}" alt="${p.name.replace(/"/g,'&quot;')}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">` : '';
       const hasImg = p.imageUrl ? ' has-img' : '';
       const varId = p.variants?.[0]?.id || '';
-      return `<div class="product reveal${delay}" data-id="${p.id}" data-variation-id="${varId}" data-price="${(p.price/100).toFixed(2)}" data-name="${p.name.replace(/"/g,'&quot;')}">
+      return `<div class="product reveal${delay}" data-id="${p.id}" data-variation-id="${varId}" data-price="${(p.price/100).toFixed(2)}" data-name="${p.name.replace(/"/g,'&quot;')}" onclick="openProductModal(allProducts.find(x=>x.id==='${p.id}'))" style="cursor:pointer;">
         <div class="product-img${hasImg}" style="position:relative;">${badge}${imgTag}<div class="hex-placeholder"${p.imageUrl?' style="display:none"':''}></div></div>
         <div class="product-body">
           <div class="product-cat">// Tool</div>
@@ -2618,6 +2618,58 @@
     });
   })();
 </script>
-<script src="https://widgets.leadconnectorhq.com/loader.js" data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js" data-widget-id="6a39bdb36eb44d6f320dc288"></script>
+<script src="https://widgets.leadconnectorhq.com/loader.js" data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js" data-widget-id="6a39bdb36eb44d6f320dc288">
+  function openProductModal(p) {
+    if (!p) return;
+    const overlay = document.getElementById('product-modal-overlay');
+    const modal = document.getElementById('product-modal');
+    const imgWrap = document.getElementById('product-modal-img');
+    document.getElementById('product-modal-name').textContent = p.name;
+    document.getElementById('product-modal-price').textContent = p.priceFormatted;
+    document.getElementById('product-modal-desc').textContent = p.description || 'Professional-grade tool for window tinting and PPF installation.';
+    let badge = p.price >= 2000 ? 'PREMIUM' : p.price >= 1000 ? 'MID-TIER' : 'BUDGET';
+    document.getElementById('product-modal-badge').textContent = '// ' + badge;
+    imgWrap.innerHTML = p.imageUrl
+      ? '<img src="' + p.imageUrl + '" alt="' + p.name + '" style="width:100%;height:100%;object-fit:cover;">'
+      : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#333;font-family:JetBrains Mono,monospace;font-size:11px;letter-spacing:2px;">// NO IMAGE YET</div>';
+    overlay.style.display = 'block';
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+    document.getElementById('product-modal-add').onclick = () => {
+      const existing = cart.find(i => i.id === p.id);
+      if (existing) existing.qty++;
+      else cart.push({ id: p.id, variationId: p.variants?.[0]?.id || '', name: p.name, price: p.price / 100, qty: 1 });
+      saveCart(); renderCart(); updateCartBadge();
+      const btn = document.getElementById('product-modal-add');
+      btn.textContent = 'ADDED ✓';
+      btn.style.background = '#3ecf8e';
+      setTimeout(() => { btn.textContent = 'ADD TO CART +'; btn.style.background = '#4d9fff'; }, 1500);
+    };
+  }
+
+  function closeProductModal() {
+    document.getElementById('product-modal-overlay').style.display = 'none';
+    document.getElementById('product-modal').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeProductModal(); });
+</script>
+
+<!-- PRODUCT DETAIL MODAL -->
+<div id="product-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9998;backdrop-filter:blur(6px);" onclick="closeProductModal()"></div>
+<div id="product-modal" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:9999;background:#0f0f0f;border:1px solid rgba(77,159,255,0.25);border-radius:16px;width:min(560px,92vw);max-height:88vh;overflow-y:auto;">
+  <button onclick="closeProductModal()" style="position:absolute;top:16px;right:16px;background:transparent;border:none;color:#888;font-size:20px;cursor:pointer;z-index:1;">✕</button>
+  <div id="product-modal-img" style="width:100%;aspect-ratio:4/3;background:#0a0a0a;border-radius:16px 16px 0 0;overflow:hidden;"></div>
+  <div style="padding:28px;">
+    <div id="product-modal-badge" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:#4d9fff;margin-bottom:10px;"></div>
+    <div id="product-modal-name" style="font-size:22px;font-weight:700;color:#f5f5f5;margin-bottom:12px;line-height:1.3;"></div>
+    <div id="product-modal-desc" style="font-size:14px;color:#999;line-height:1.7;margin-bottom:24px;"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+      <div id="product-modal-price" style="font-size:26px;font-weight:700;color:#4d9fff;font-family:'JetBrains Mono',monospace;"></div>
+      <button id="product-modal-add" style="background:#4d9fff;color:#0a0a0a;border:none;padding:14px 28px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;letter-spacing:1px;font-family:'JetBrains Mono',monospace;">ADD TO CART +</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
