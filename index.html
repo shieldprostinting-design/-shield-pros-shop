@@ -1681,6 +1681,23 @@
       <h2 class="section-title">Every <span class="italic">tool</span> you need.</h2>
     </div>
     
+    <style>
+      .cat-filter{background:transparent;border:1px solid rgba(255,255,255,0.12);color:#888;padding:8px 18px;border-radius:6px;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:1.5px;cursor:pointer;transition:all 0.2s;}
+      .cat-filter.active{background:rgba(77,159,255,0.12);border-color:rgba(77,159,255,0.4);color:#4d9fff;}
+      .cat-filter:hover{border-color:rgba(77,159,255,0.3);color:#aac9ff;}
+      #catalog-search:focus{border-color:rgba(77,159,255,0.6)!important;}
+    </style>
+    <div class="reveal" style="margin-bottom:32px;">
+      <div style="position:relative;max-width:480px;">
+        <svg style="position:absolute;left:14px;top:50%;transform:translateY(-50%);pointer-events:none;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4d9fff" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="search" id="catalog-search" placeholder="// search squeegee, ppf, blade..." autocomplete="off" style="width:100%;background:#0d0d0d;border:1px solid rgba(77,159,255,0.25);border-radius:8px;padding:12px 18px 12px 44px;color:#f5f5f5;font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:1px;outline:none;transition:border-color 0.2s;box-sizing:border-box;">
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
+        <button class="cat-filter active" data-cat="all">ALL PRODUCTS</button>
+        <button class="cat-filter" data-cat="tint">WINDOW TINT</button>
+        <button class="cat-filter" data-cat="ppf">HEADLIGHT &amp; TAILLIGHT PPF</button>
+      </div>
+    </div>
     <div id="sq-products-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px;padding:20px 0 60px"></div>
     <div class="products" style="display:none">
       <!-- Catalog v2 — generated from Square XLSX export. All 44 products including hidden "blue max". -->
@@ -2290,68 +2307,120 @@
 
   // === FILTER CHIPS ===
   // Square catalog loader
+  // === SEARCH + FILTER + SQUARE SYNC ===
+  const CAT_KEYWORDS = {
+    tint: ['tint','ceramic','carbon','film','squeegee','scraper','prep','soak','scrubber','blade','gasket','nozzle','spray','hose','card','slammer','handle','pouch','glove','titan','bulldozer','channel','moon','window','quarter','utility','corner','wrap','micro'],
+    ppf: ['ppf','headlight','taillight','paint protection'],
+  };
+  let allProducts = [];
+  let activeFilter = 'all';
+  let searchQuery = '';
+
+  function matchesFilter(name) {
+    if (activeFilter === 'all') return true;
+    const lower = name.toLowerCase();
+    return (CAT_KEYWORDS[activeFilter] || []).some(k => lower.includes(k));
+  }
+  function matchesSearch(name, description) {
+    if (!searchQuery) return true;
+    const q = searchQuery.toLowerCase();
+    return name.toLowerCase().includes(q) || (description||'').toLowerCase().includes(q);
+  }
+
+  function renderProducts() {
+    const grid = document.getElementById('sq-products-grid');
+    if (!grid) return;
+    const filtered = allProducts.filter(p => matchesFilter(p.name) && matchesSearch(p.name, p.description));
+    if (filtered.length === 0) {
+      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;color:#555;font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:2px;">// NO PRODUCTS MATCH — TRY A DIFFERENT SEARCH</div>`;
+      return;
+    }
+    grid.innerHTML = filtered.map((p, i) => {
+      const delay = i % 3 === 1 ? ' reveal-delay-1' : i % 3 === 2 ? ' reveal-delay-2' : '';
+      let badge = '';
+      if (p.price >= 2000) badge = '<span class="product-badge premium">Premium</span>';
+      else if (p.price >= 1000) badge = '<span class="product-badge cyan">Mid-Tier</span>';
+      else badge = '<span class="product-badge">Budget</span>';
+      const imgTag = p.imageUrl ? `<img src="${p.imageUrl}" alt="${p.name.replace(/"/g,'&quot;')}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">` : '';
+      const hasImg = p.imageUrl ? ' has-img' : '';
+      const varId = p.variants?.[0]?.id || '';
+      return `<div class="product reveal${delay}" data-id="${p.id}" data-variation-id="${varId}" data-price="${(p.price/100).toFixed(2)}" data-name="${p.name.replace(/"/g,'&quot;')}">
+        <div class="product-img${hasImg}" style="position:relative;">${badge}${imgTag}<div class="hex-placeholder"${p.imageUrl?' style="display:none"':''}></div></div>
+        <div class="product-body">
+          <div class="product-cat">// Tool</div>
+          <div class="product-name">${p.name}</div>
+          <div class="product-foot">
+            <div class="product-price">${p.priceFormatted}</div>
+            <button class="prod-add">Add +</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+
+    grid.querySelectorAll('.product[data-id]').forEach(card => {
+      const id = card.dataset.id;
+      const variationId = card.dataset.variationId;
+      const name = card.querySelector('.product-name')?.textContent.trim() || '';
+      const price = parseFloat(card.dataset.price) || 0;
+      const addBtn = card.querySelector('.prod-add');
+      if (!addBtn) return;
+      addBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const existing = cart.find(i => i.id === id);
+        if (existing) existing.qty++;
+        else cart.push({ id, variationId, name, price, qty: 1 });
+        saveCart(); renderCart(); updateCartBadge();
+        const original = addBtn.textContent;
+        addBtn.textContent = 'Added ✓';
+        addBtn.style.background = 'var(--gold)';
+        addBtn.style.color = 'var(--bg)';
+        setTimeout(() => { addBtn.textContent = original; addBtn.style.background = ''; addBtn.style.color = ''; }, 1500);
+      });
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        card.style.transform = `perspective(900px) rotateX(${y * -6}deg) rotateY(${x * 8}deg) translateY(-4px)`;
+      });
+      card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+    });
+    grid.querySelectorAll('.reveal:not(.in)').forEach(el => revealObserver.observe(el));
+  }
+
+  // Wire search
+  const searchInput = document.getElementById('catalog-search');
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value.trim();
+      renderProducts();
+    });
+  }
+
+  // Wire filter buttons
+  document.querySelectorAll('.cat-filter').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeFilter = btn.dataset.cat;
+      document.querySelectorAll('.cat-filter').forEach(b => b.classList.toggle('active', b.dataset.cat === activeFilter));
+      renderProducts();
+    });
+  });
+
   async function loadSquareProducts() {
     const grid = document.getElementById('sq-products-grid');
     if (!grid) return;
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;color:#555;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;">// LOADING CATALOG...</div>`;
     try {
       const res = await fetch('/api/catalog');
       const data = await res.json();
       if (!data.products || !data.products.length) {
-        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px;color:#555;font-family:JetBrains Mono,monospace;font-size:12px;letter-spacing:2px;">// NO PRODUCTS FOUND</div>';
+        grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;color:#555;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;">// NO PRODUCTS FOUND</div>`;
         return;
       }
-      grid.innerHTML = data.products.map((p, i) => {
-        const delay = i % 3 === 1 ? ' reveal-delay-1' : i % 3 === 2 ? ' reveal-delay-2' : '';
-        let badge = '';
-        if (p.price >= 2000) badge = '<span class="product-badge premium">Premium</span>';
-        else if (p.price >= 1000) badge = '<span class="product-badge cyan">Mid-Tier</span>';
-        else badge = '<span class="product-badge">Budget</span>';
-        const imgTag = p.imageUrl ? `<img src="${p.imageUrl}" alt="${p.name}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">` : '';
-        const hasImg = " has-img";
-        return `<div class="product reveal${delay}" data-id="${p.id}" data-variation-id="${p.variationId}" data-price="${(p.price/100).toFixed(2)}" data-name="${p.name.replace(/"/g,'&quot;')}">
-          <div class="product-img${hasImg}" style="position:relative;">${badge}${imgTag}<div class="hex-placeholder" style="${p.imageUrl ? 'display:none' : ''}"></div></div>
-          <div class="product-body">
-            <div class="product-cat">// Tool</div>
-            <div class="product-name">${p.name}</div>
-            <div class="product-foot">
-              <div class="product-price">${p.priceFormatted}</div>
-              <button class="prod-add">Add +</button>
-            </div>
-          </div>
-        </div>`;
-      }).join('');
-
-      document.querySelectorAll('#sq-products-grid .product[data-id]').forEach(card => {
-        const id = card.dataset.id;
-        const variationId = card.dataset.variationId;
-        const name = card.querySelector('.product-name')?.textContent.trim() || '';
-        const price = parseFloat(card.dataset.price) || 0;
-        const addBtn = card.querySelector('.prod-add');
-        if (!addBtn) return;
-        addBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const existing = cart.find(i => i.id === id);
-          if (existing) existing.qty++;
-          else cart.push({ id, variationId, name, price, qty: 1 });
-          saveCart(); renderCart(); updateCartBadge();
-          const original = addBtn.textContent;
-          addBtn.textContent = 'Added ✓';
-          addBtn.style.background = 'var(--gold)';
-          addBtn.style.color = 'var(--bg)';
-          setTimeout(() => { addBtn.textContent = original; addBtn.style.background = ''; addBtn.style.color = ''; }, 1500);
-        });
-        card.addEventListener('mousemove', (e) => {
-          const rect = card.getBoundingClientRect();
-          const x = (e.clientX - rect.left) / rect.width - 0.5;
-          const y = (e.clientY - rect.top) / rect.height - 0.5;
-          card.style.transform = `perspective(900px) rotateX(${y * -6}deg) rotateY(${x * 8}deg) translateY(-4px)`;
-        });
-        card.addEventListener('mouseleave', () => { card.style.transform = ''; });
-      });
-
-      document.querySelectorAll('#sq-products-grid .product.reveal:not(.in)').forEach(el => revealObserver.observe(el));
+      allProducts = data.products;
+      renderProducts();
     } catch(err) {
       console.error('Square catalog error:', err);
+      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;color:#ff6b6b;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;">// ERROR LOADING CATALOG</div>`;
     }
   }
   loadSquareProducts();
