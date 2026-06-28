@@ -82,7 +82,15 @@ export default async function handler(req, res) {
       };
     });
 
-    res.status(200).json({ products });
+    // Debug info
+    const debugInfo = {
+      totalItems: items.length,
+      totalImageIds: imageIds.length,
+      totalImagesMapped: Object.keys(imageMap).length,
+      sampleImageIds: imageIds.slice(0, 3),
+      sampleImageMap: Object.fromEntries(Object.entries(imageMap).slice(0, 3))
+    };
+    res.status(200).json({ products, debug: debugInfo });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
